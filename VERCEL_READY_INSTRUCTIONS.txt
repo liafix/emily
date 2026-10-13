@@ -1,0 +1,7 @@
+1. Rozbal ZIP.
+2. Otvor PowerShell v priecinku for-emily, kde je package.json.
+3. Spusti: powershell -ExecutionPolicy Bypass -File .\DEPLOY_TO_VERCEL.ps1
+4. Dokonci Vercel prihlasenie v prehliadaci.
+5. Skopiruj vyslednu preview URL naspat do ChatGPT.
+Projekt uz existuje vo Vercel time dusan2. Je chraneny cez Vercel Authentication.
+Pred poslanim Emily treba doplnit contactUrl a realnu uctovnu otazku.

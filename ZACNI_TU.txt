@@ -1,0 +1,49 @@
+FOR EMILY. — A PRIVATE CONSULTATION / V1.1
+=======================================================
+
+Zatiaľ nič nebolo nasadené online a Emily nebola odoslaná žiadna správa.
+
+MOŽNOSŤ A — RÝCHLY OFFLINE NÁHĽAD
+----------------------------------
+Otvor súbor: preview/index.html
+
+Funguje bez npm inštalácie: päť scén, navigácia, pozvanie,
+možnosti odpovedí, kopírovanie textu, opt-in zvuk.
+Offline náhľad je samostatná referenčná implementácia, nie Next.js build.
+
+MOŽNOSŤ B — HLAVNÝ NEXT.JS PROJEKT VO VS CODE
+---------------------------------------------
+1. Rozbaľ ZIP.
+2. Vo VS Code otvor priečinok for-emily (musí obsahovať package.json).
+3. Otvor Terminal > New Terminal.
+4. Spusti:
+       npm install
+       npm run dev
+5. V prehliadači otvor http://localhost:3000
+
+Po prvom npm install (cez internet) spusti:
+       npm run typecheck
+       npm run lint
+       npm run build
+       npm run test:static
+
+V TOMTO PROSTREDÍ NEBOLO MOŽNÉ OVERIŤ NEXT BUILD:
+npm registry bolo nedostupné (DNS / EAI_AGAIN).
+Balík preto obsahuje zatiaľ iba bootstrap package-lock.json;
+prvé npm install doplní skutočné verzie závislostí.
+
+AKO UPRAVIŤ POZVANIE
+--------------------
+content/config.ts:
+- accountingQuestion — skutočná ekonomická otázka (zatiaľ prázdna)
+- contactUrl — tvoj kontaktný odkaz (zatiaľ prázdny)
+- suggestedMessage — text správy pre Emily
+- audioFile — voliteľná legálne licencovaná hudba
+
+content/copy.ts:
+- všetky hlavné slovenské texty príbehu
+
+Viac: README.md, DEPLOYMENT.md, QA_REPORT.md, RELEASE_CHECKLIST.md
+
+DÔLEŽITÉ: Najskôr urob skutočné testy na iPhone Safari,
+až potom odosielaj odkaz Emily.

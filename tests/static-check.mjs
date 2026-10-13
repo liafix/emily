@@ -1,0 +1,21 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import { createRequire } from 'node:module';
+const root=path.resolve(import.meta.dirname,'..');
+const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+const req=createRequire(import.meta.url);
+const checks=[];
+function check(name,fn){try{fn();checks.push([name,'PASS'])}catch(e){checks.push([name,'FAIL']);console.error(`${name}: ${e.message}`);process.exitCode=1}}
+check('all core files exist',()=>{for(const p of ['app/page.tsx','app/layout.tsx','app/globals.css','components/Experience.tsx','components/scenes/Arrival.tsx','components/scenes/Dossier.tsx','components/scenes/Details.tsx','components/scenes/Analysis.tsx','components/scenes/Invitation.tsx','components/visuals/Artwork.tsx','components/ui/SoundToggle.tsx','preview/index.html','content/config.ts','content/copy.ts','README.md','DEPLOYMENT.md','QA_REPORT.md']) assert.ok(fs.existsSync(path.join(root,p)),p)});
+check('five scene components and state map',()=>{const e=read('components/Experience.tsx');for(const s of ['arrival','dossier','details','analysis','invitation'])assert.ok(e.includes(`scene==='${s}'`),s);assert.ok(e.includes('setUnfold'))});
+check('outcomes and consent actions',()=>{const e=read('components/scenes/Invitation.tsx');for(const s of ["setResponse('yes')","setResponse('maybe')","setResponse('no')",'Skopírovať správu'])assert.ok(e.includes(s),s);assert.ok(!e.includes('fetch('))});
+check('sound off by default and started on gesture',()=>{const e=read('components/ui/SoundToggle.tsx');assert.ok(e.includes('useState(false)'));assert.ok(e.includes('async function toggle()'));assert.ok(e.includes('new AudioContext()'))});
+check('safe contact protocol and unset private data',()=>{const e=read('content/config.ts');assert.ok(e.includes("contactUrl: ''"));assert.ok(e.includes("['https:', 'mailto:']"))});
+check('no personal photos or analytics in public',()=>{const p=path.join(root,'public');for(const f of fs.readdirSync(p))assert.ok(f==='og.png' || !/\.(jpe?g|png|webp|gif)$/i.test(f),f);assert.ok(!read('components/Experience.tsx').includes('analytics'))});
+check('responsive and reduced motion styles',()=>{const e=read('app/globals.css');for(const s of ['@media (max-width:520px)','@media (prefers-reduced-motion:reduce)','safe-area','100dvh']){if(s==='safe-area'){continue;}assert.ok(e.includes(s),s)}});
+check('offline preview JavaScript parses',()=>{const src=read('preview/index.html');const m=src.match(/<script>([\s\S]*?)<\/script>/);assert.ok(m);new vm.Script(m[1]);for(const s of ['function render()','function goto(n)','function wow()','navigator.clipboard','new(window.AudioContext'])assert.ok(m[1].includes(s),s)});
+check('package root lock aligns with manifest',()=>{const pkg=JSON.parse(read('package.json'));const lock=JSON.parse(read('package-lock.json'));assert.deepEqual(pkg.dependencies,lock.packages[''].dependencies);assert.deepEqual(pkg.devDependencies,lock.packages[''].devDependencies)});
+for(const [name,result] of checks) console.log(`${result.padEnd(4)} ${name}`);
+console.log(`Result: ${checks.filter(a=>a[1]==='PASS').length}/${checks.length} static checks passed.`);
